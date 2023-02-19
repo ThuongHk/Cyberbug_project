@@ -12,7 +12,7 @@ const CreateProject = () => {
             description: ''
         },
         onSubmit: values => {
-            console.log(values);
+            // console.log(values);
         }
     })
     const editorRef = useRef(null);
@@ -38,7 +38,7 @@ const CreateProject = () => {
                     <Editor
                         name='description'
                         value={formik.values.description}
-                        onChange={()=>{formik.setFieldValue('description', editorRef.current.getContent())}}
+                        onEditorChange={()=>{formik.setFieldValue('description', editorRef.current.getContent())}}
 
                         onInit={(evt, editor) => editorRef.current = editor}
                         initialValue="<p>This is the initial content of the editor.</p>"

@@ -1,9 +1,18 @@
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import CyberbugTemplate from './cyberbugs/CyberbugTemplate'
 import { publicRoutes } from './routes/routes'
 import { Fragment } from 'react'
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { saveNavigate } from './redux/reducer/navigateSlice';
 
 function App() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
+ useEffect(()=>{
+  dispatch(saveNavigate(navigate))
+  
+ },[])
   return (
     <div className="App">
       <Routes>
