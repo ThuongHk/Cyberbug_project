@@ -1,28 +1,42 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { useFormik } from 'formik';
 import * as yup from 'yup'
+import { useDispatch, useSelector } from 'react-redux';
+import { GET_ALL_CATEGORY_SAGA } from '../../redux/constan/cyberbugCategory';
+import styles from './CreateProject.module.scss'
 
 const CreateProject = () => {
+    const dispatch = useDispatch()
 
+    useEffect(()=>{
+       dispatch({
+        type: GET_ALL_CATEGORY_SAGA
+       })
+    },[])
+    const {arrProjectCategory} = useSelector(state => state.cyberbugCategory);
     
     const formik = useFormik({        
         initialValues: {
             projectName: '',
-            description: ''
+            description: '',
+            categoriId: ''
         },
         onSubmit: values => {
-            // console.log(values);
+           dispatch({
+            type: 'NEW_PROJECT_SAGA',
+            newProject: values
+           })
         }
     })
     const editorRef = useRef(null);
     const log = () => {       
         if (editorRef.current) {
-            console.log(editorRef.current.getContent());
+            // console.log(editorRef.current.getContent());
         }
     };    
     return (
-        <div>
+        <div className={styles.container}>
             <h3>CreateProject</h3>
             <form onSubmit={formik.handleSubmit}>
                 <div className="form-group">
@@ -61,13 +75,16 @@ const CreateProject = () => {
 
                 </div>
                 <div className="form-group">
-                    <select className='form-control' name='categoriId'>
-                        <option value='web'>Web</option>
-                        <option value='software'>Software</option>
-                        <option value='app'>App</option>
+                    <select className='form-control' defaultValue={1} name='categoriId'  value={formik.values.categoriId}
+                        onChange={formik.handleChange}>
+                        {arrProjectCategory.map((item, index)=>{
+                            return (
+                                <option value={item.id} key={index}>{item.projectCategoryName}</option>
+                            )
+                        })}
                     </select>
                 </div>
-                <button onClick={log} className='btn btn-outline-primary'>Create Project</button>
+                <button type='submit' onClick={log} className='btn btn-outline-primary mb-5'>Create Project</button>
             </form>
         </div>
     )

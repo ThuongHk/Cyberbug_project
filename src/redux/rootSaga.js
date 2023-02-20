@@ -1,11 +1,14 @@
 import axios from "axios";
 import { call, put, takeLatest,delay, select } from 'redux-saga/effects'
 import { TOKEN, USER_LOGIN } from "../util/settingSytem";
+import { GET_ALL_CATEGORY_SAGA } from "./constan/cyberbugCategory";
 import { LOGIN_SAGA } from "./constan/login";
 import { ADD_TASK_LIST_SAGA, CHECK_DONE_TASK_SAGA, GET_TASK_LIST_SAGA } from "./constan/todolist";
+import { getAllCategory } from "./reducer/cyberbugCategory";
 import { displayLoading } from "./reducer/loadingSlice";
 import { tokenLogin } from "./reducer/savaTokenSlice";
 import { getTodolist } from "./reducer/todolistSlice";
+console.log('axios', axios);
 
 // ------todolist----
 function*getTaskListSaga(){
@@ -16,6 +19,7 @@ function*getTaskListSaga(){
             method: 'GET'
         })
        })
+       console.log(axios);
        yield put(getTodolist(data))
     }catch(err){
         console.log(err);
@@ -87,9 +91,47 @@ function*userLogin(action){
     console.log(navigate);
     navigate('/todolistsaga')
     yield put(tokenLogin(data.content))
+
     }catch(err){
         console.log(err);
     }
+}
+
+
+// --------cyberbugCategory--------------------
+function*getAllCategorySaga(){
+    try{
+          const {data, status} = yield call(()=>{
+            return axios({
+                url: 'http://casestudy.cyberlearn.vn/api/ProjectCategory',
+                method: 'GET',
+            })
+          })
+          yield put(getAllCategory(data.content))
+    }catch(err){
+        console.log(err.response.data);
+    }
+}
+// -------newProject--------------------------------
+
+function*newProjectNameSaga(action){
+    // console.log(action);
+    
+  try{
+    const {data, status} = yield call(()=>{
+        return axios({
+            url: 'http://casestudy.cyberlearn.vn/api/Project/createProjectAuthorize',
+            method: 'POST',
+            data: action.newProject,
+            headers: {'Authorization': 'Bearer ' + localStorage.getItem(TOKEN)}
+        })
+        
+    })
+    console.log(data, status);
+    
+  }catch(err){
+    console.log(err.response);
+  }
 }
 
 export function*rootSaga(){
@@ -100,4 +142,11 @@ export function*rootSaga(){
 
 //  -----login----
 yield takeLatest(LOGIN_SAGA, userLogin)
+
+// ==== cyberbugCategory =================================================================
+
+yield takeLatest(GET_ALL_CATEGORY_SAGA, getAllCategorySaga)
+
+// ------newProject---------
+   yield takeLatest('NEW_PROJECT_SAGA', newProjectNameSaga)
 }

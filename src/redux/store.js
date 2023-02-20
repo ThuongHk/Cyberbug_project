@@ -1,5 +1,6 @@
 import createSagaMiddleware from "@redux-saga/core";
 import { configureStore } from "@reduxjs/toolkit";
+import cyberbugCategory from "./reducer/cyberbugCategory";
 import loadingSlice from "./reducer/loadingSlice";
 import navigateSlice from "./reducer/navigateSlice";
 import savaTokenSlice from "./reducer/savaTokenSlice";
@@ -13,7 +14,8 @@ const store = configureStore({
         todolistSlice,
         loadingSlice,
         savaTokenSlice,
-        navigateSlice 
+        navigateSlice,
+        cyberbugCategory 
     },
     middleware: [sagaMiddleware]
 })
